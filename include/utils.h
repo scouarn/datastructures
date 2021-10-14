@@ -15,6 +15,8 @@
       __typeof__ (b) _b = (b); \
      _a < _b ? _a : _b; })
 
+#define VP(x) ((void*)x)
+
 
 typedef enum {false, true} bool;
 

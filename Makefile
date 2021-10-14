@@ -5,39 +5,38 @@ LINK := -lm -lpthread -lc
 INC_DIR := include/
 SRC_DIR := source/
 OBJ_DIR := bin/
-LIB_DIR := /lib/
+LIB_DIR := /usr/lib/
 
 SRC := $(wildcard $(SRC_DIR)*.c)
 OBJ := $(patsubst $(SRC_DIR)%.c,$(OBJ_DIR)%.o,$(SRC))
 
-TGT_LN := -lstruct
-TGT_SO := libstruct.so
+LIB_LN := -lstruct
+LIB_SO := libstruct.so
 
 TEST = test
 
 
 .PHONY: all
-all : $(TGT_SO) $(TEST)
+all : $(LIB_SO) $(TEST)
 
 .PHONY: lib
-lib : $(TGT_SO)
+lib : $(LIB_SO)
 
 
 .PHONY : install
 install: all
-	cp $(TGT_SO) $(LIB_DIR)
+	cp $(LIB_SO) $(LIB_DIR)
 
 .PHONY : runtest
 runtest:
-	export LD_LIBRARY_PATH=`pwd`
-	./test
+	./runtest.sh
 
-$(TGT_SO) : $(OBJ)
+$(LIB_SO) : $(OBJ)
 	$(CC) $(CFLAGS) $(LINK) -lc -shared -o $@ $^
 
 
-$(TEST) : $(TGT_SO) $(OBJ_DIR)$(TEST).o
-	$(CC) $(CFLAGS) $(LINK) -I$(INC_DIR) -L./ $(TGT_LN) -o $@ $^
+$(TEST) : $(LIB_SO) $(OBJ_DIR)$(TEST).o
+	$(CC) $(CFLAGS) $(LINK) -I$(INC_DIR) -L./ $(LIB_LN) -o $@ $^
 
 
 

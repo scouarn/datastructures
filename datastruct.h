@@ -11,6 +11,7 @@
 #include "include/preint.h"
 #include "include/thrpool.h"
 #include "include/utils.h"
+#include "include/strings.h"
 
 
 
