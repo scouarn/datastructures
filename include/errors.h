@@ -12,7 +12,7 @@
 	time_t sec = time(NULL);\
 	struct tm* tm_info = localtime(&sec);\
 	strftime(buffer, 16, "%H:%M:%S", tm_info);\
-	fprintf(stderr, "[%s - %s] %s : %s\n", buffer, __FILE__, type, message);\
+	fprintf(stderr, "[%s - %s - %s] %s : %s\n", buffer, __FILE__, __func__, type, message);\
 }\
 
 

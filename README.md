@@ -1,6 +1,6 @@
 # Data structure library
 
-Collection of various handy pieces of code about data manipulation implemented in C with homogeneous interface.  
+Collection of various handy pieces of code about data manipulation implemented in C with an homogeneous interface.
 
 ## What's done :
 

@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -O3 -Wall -std=c89 -pedantic
+CFLAGS := -Wall -std=c89 -pedantic
 LINK := -lm -lpthread -lc
 
 INC_DIR := include/
