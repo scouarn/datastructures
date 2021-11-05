@@ -1,11 +1,11 @@
 # Data structure library
 
-Collection of various handy pieces of code about data manipulation implemented in C with an homogeneous interface.
+Collection of various handy cross-platform pieces of code about data manipulation implemented in C with an homogeneous interface.
 
 ## What's done :
 
-* Linked list
-* Error utility 
+* linked list
+* error utility 
 * hashtable
 
 ## TODO :
@@ -18,3 +18,4 @@ Collection of various handy pieces of code about data manipulation implemented i
 * strings
 * threadpool
 * tree
+* common algorithms
