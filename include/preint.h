@@ -26,4 +26,4 @@ int M_int_sqt(M_int_t* res, M_int_t* num);
 
 
 
-#endif //int_h
+#endif /* int_h */

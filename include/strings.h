@@ -3,4 +3,4 @@
 
 typedef struct __M_str_t__ M_str_t;
 
-#endif //strings_h
+#endif /* strings_h */

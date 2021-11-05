@@ -47,4 +47,4 @@ void M_mat_aTbT(M_mat_t* dst, M_mat_t* a, M_mat_t* b);
 #define M_mat_mul M_mat_ab
 
 
-#endif //matrix_h
+#endif /* matrix_h */

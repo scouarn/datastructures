@@ -3,26 +3,15 @@
 
 
 #include <stdint.h>
+#include <stdbool.h>
+
+/* not safe with MIN(a++, --b)... */
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
 
 
-#define MAX(a,b) \
-   ({ __typeof__ (a) _a = (a); \
-      __typeof__ (b) _b = (b); \
-     _a > _b ? _a : _b; })
-
-#define MIN(a,b) \
-   ({ __typeof__ (a) _a = (a); \
-      __typeof__ (b) _b = (b); \
-     _a < _b ? _a : _b; })
-
-#define VP(x) ((void*)x)
-
-
-typedef enum {false, true} bool;
-
-
-void M_assert(bool test, const char* error_message);
+#define VP(x) ((void*)(x))
 
 
 
-#endif //utils_h
+#endif /* utils_h */

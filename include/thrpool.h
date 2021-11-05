@@ -7,4 +7,4 @@ M_thrpool_t* M_thrpool_make();
 void M_thrpool_free (M_thrpool_t* pool);
 void M_thrpool_print(M_thrpool_t* pool);
 
-#endif //thrpool_h
+#endif /* thrpool_h */

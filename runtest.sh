@@ -1,1 +1,1 @@
-LD_LIBRARY_PATH=`pwd`; ./test
+export LD_LIBRARY_PATH=`pwd`; ./test

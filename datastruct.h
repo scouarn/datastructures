@@ -1,8 +1,9 @@
 
-
 #ifndef _DATASTRUCT_H_
 #define _DATASTRUCT_H_
 
+
+#include "include/errors.h"
 #include "include/fifo.h"
 #include "include/hshtbl.h"
 #include "include/lifo.h"
@@ -14,5 +15,4 @@
 #include "include/strings.h"
 
 
-
-#endif
+#endif /* datastruct_h */

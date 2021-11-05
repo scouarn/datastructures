@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -O3 -Wall -std=c99
+CFLAGS := -O3 -Wall -std=c89 -pedantic
 LINK := -lm -lpthread -lc
 
 INC_DIR := include/
@@ -28,7 +28,7 @@ install: all
 	cp $(LIB_SO) $(LIB_DIR)
 
 .PHONY : runtest
-runtest:
+runtest: $(TEST)
 	./runtest.sh
 
 $(LIB_SO) : $(OBJ)
@@ -46,4 +46,4 @@ $(OBJ_DIR)%.o : $(SRC_DIR)%.c
 
 
 clean :
-	rm -f */*.o $(TGT)
+	rm -f */*.o $(TEST)

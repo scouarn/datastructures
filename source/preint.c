@@ -1,4 +1,5 @@
 #include "preint.h"
+#include "errors.h"
 
 #include <math.h>
 #include <stdlib.h>
@@ -8,13 +9,13 @@
 #define RADIX 256
 
 
-typedef struct __M_int_t__ {
+struct __M_int_t__ {
 	uint8_t* data;
-	uint64_t size;
-} M_int_t;
+	size_t size;
+};
 
 
-M_int_t* M_int_make(uint64_t size, uint64_t init_value) {
+M_int_t* M_int_make(size_t size, uint64_t init_value) {
 	
 	M_int_t* num = malloc(sizeof(M_int_t));
 	num->data = calloc(size, WIDTH);
@@ -39,13 +40,17 @@ void M_int_free(M_int_t* num) {
 
 
 void M_int_print(M_int_t* num) {
-	for (uint64_t i = num->size-1; i >= 0; i-= WIDTH) 
+	
+	size_t i;
+	for (i = num->size-1; i >= 0; i-= WIDTH) 
 		printf("%d", num->data[i]);
 }
 
 
 int M_int_cpy(M_int_t* res, M_int_t* a) {
-	for (uint64_t i = 0; i < MIN(res->size, a->size); i+= WIDTH)
+
+	size_t i;
+	for (i = 0; i < MIN(res->size, a->size); i+= WIDTH)
 		res->data[i] = a->data[i]; 
 
 	return 0;

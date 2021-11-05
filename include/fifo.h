@@ -3,4 +3,4 @@
 
 typedef struct __M_fifo_t__ M_fifo_t;
 
-#endif //fifo_h
+#endif /* fifo_h */
