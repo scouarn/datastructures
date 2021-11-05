@@ -6,14 +6,15 @@ Collection of various handy pieces of code about data manipulation implemented i
 
 * Linked list
 * Error utility 
+* hashtable
 
 ## TODO :
 
 * fifo -- list with restrictions
 * lifo -- looping list
+* dictionnary -- hashtable with string and no hash overlap
 * matrix
 * arbitrary precision int
-* hashtable
 * strings
 * threadpool
 * tree
