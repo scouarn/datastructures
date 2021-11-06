@@ -46,4 +46,4 @@ $(OBJ_DIR)%.o : $(SRC_DIR)%.c
 
 
 clean :
-	rm -f */*.o $(TEST)
+	rm -f */*.o $(TEST) $(LIB_SO)
