@@ -4,11 +4,10 @@
 
 /* This is a pretty generelize hashtable implementation which only works 
  * with integer keys. An equality test function would be requiered if it
- * was to be done even more general. 
- * For string-keyed dictionnary, using a dedicated module is prefered but
- * you can use a hash of the string as a key if you know overlaps won't happen. */
-
-
+ * was to be done even more general. Here the hash is just the key modulo
+ * the size of the table. For string-keyed dictionnary, using a dedicated 
+ * module is prefered but you can use a hash of the string as a key if 
+ * you know overlaps won't happen. */
 
 
 #include <stdlib.h>
