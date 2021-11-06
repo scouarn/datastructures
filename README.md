@@ -1,17 +1,18 @@
 # Data structure library
 
-Collection of various handy cross-platform pieces of code about data manipulation implemented in C with an homogeneous interface.
+Collection of various handy cross-platform pieces of code about data manipulation implemented in C (ansi standard) with an homogeneous interface.
 
 ## What's done :
 
-* linked list
 * error utility 
+* linked list
 * hashtable
+* stack
+
 
 ## TODO :
 
-* fifo -- list with restrictions
-* lifo -- looping list
+* queue
 * dictionnary -- hashtable with string and no hash overlap
 * matrix
 * arbitrary precision int

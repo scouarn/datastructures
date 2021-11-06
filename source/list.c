@@ -4,36 +4,39 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+struct __M_list_t__ {
+	void* data;
+	struct __M_list_t__ *next;
+	struct __M_list_t__ *prev;
+};
 
-M_list_t* M_list_make(void* elem) {
+
+M_list_t* M_list_make() {
 
 	M_list_t* list = malloc(sizeof(M_list_t));
 	list->next = NULL;
 	list->prev = NULL;
-	list->data = elem;
+	list->data = 0;
 
 	return list;
 }
 
 M_list_t* M_list_fromArray(void* arr[], size_t len) {
 
-	M_list_t *list, *tmp, *newNode;
+	M_list_t *list, *tail, *newNode;
 	size_t i;
 
-	if (len == 0) {
-		return NULL;
-	}
-	else {
+	list = M_list_make();
+	tail = list;
 
-		list = M_list_make(arr[0]);
-		tmp = list;
+	for (i = 0; i < len; i++) {
+		newNode = malloc(sizeof(M_list_t));
 
-		for (i = 1; i < len; i++) {
-			newNode = M_list_make(arr[i]);
-			tmp->next = newNode;
-			tmp = newNode;
-		}
+		tail->next = newNode;
+		newNode->prev = tail;
+		newNode->data = arr[i];
 
+		tail = newNode;
 	}
 
 	return list;
@@ -43,20 +46,24 @@ M_list_t* M_list_fromArray(void* arr[], size_t len) {
 
 void M_list_free(M_list_t* list) {
 
-	M_list_t* walk = list;
+	M_list_t* head;
+	list = M_list_head(list);
 
-	while (walk != NULL) {
-		M_list_t* temp = M_list_next(walk);
-		free(walk);
-		walk = temp;
+	while (list != NULL) {
+		head = list;
+		list = list->next;
+		free(head);
 	}
+
 }
 
 void M_list_print(const char* format, M_list_t* list) {
+	list = M_list_head(list);
+
 	printf("[");
 
-	while (list != NULL) {
-		printf(format, list->data);
+	while (!M_list_isTail(list)) {
+		printf(format, M_list_get(list));
 		list = M_list_next(list);
 	}
 
@@ -66,30 +73,28 @@ void M_list_print(const char* format, M_list_t* list) {
 
 
 bool M_list_isTail(M_list_t* list) {
-	return M_list_next(list) == EMPTY_LIST;
+	return list->next == NULL;
 }
 
 bool M_list_isHead(M_list_t* list) {
-	return M_list_prev(list) == EMPTY_LIST;
+	return list->prev == NULL;
+}
+
+bool M_list_isEmpty(M_list_t* list) {
+	return M_list_isHead(list) && M_list_isTail(list);
 }
 
 
 M_list_t* M_list_next(M_list_t* list) {
 
-	if (list == EMPTY_LIST) {
-		M_error("Asking for the next element of in an empty list.");
-	}
-
+	M_assert(!M_list_isTail(list), "Tail.");
 	return list->next;
 }
 
 
 M_list_t* M_list_prev(M_list_t* list) {
 
-	if (list == EMPTY_LIST) {
-		M_error("Asking for the previous element of in an empty list.");
-	}
-	
+	M_assert(!M_list_isHead(list), "Tail.");
 	return list->prev;
 }
 
@@ -98,6 +103,7 @@ M_list_t* M_list_tail(M_list_t* list) {
 
 	while (!M_list_isTail(list)) 
 		list = M_list_next(list);
+
 	return list;
 }
 
@@ -106,111 +112,77 @@ M_list_t* M_list_head(M_list_t* list) {
 
 	while (!M_list_isHead(list)) 
 		list = M_list_prev(list);
+
 	return list;
 }
 
 
 void* M_list_get(M_list_t* list) {
+
+	M_assert(!M_list_isEmpty(list), "Empty list.");
 	return list->data;
 }
 
 
 void M_list_set(M_list_t* list, void* elem) {
+
+	M_assert(!M_list_isEmpty(list), "Empty list.");
 	list->data = elem;
 }
 
 
-void M_list_push(M_list_t** pList, void* elem) {
+void M_list_push(M_list_t* list, void* elem) {
 
-	M_list_t* tmp;
+	M_list_t* newNode = malloc(sizeof(M_list_t));
+	list = M_list_tail(list);
 
-	M_assert(pList != NULL, "You have to give a valid pointer to a list pointer !");
-
-
-	/* add to an empty list */
-	if (*pList == EMPTY_LIST) {
-		*pList = M_list_make(elem);
-	}
-
-	/* add to a list which as a memory location */
-	else {
-		tmp = M_list_tail(*pList);
-		tmp->next = M_list_make(elem);
-	}
-
-	
+	list->next = newNode;
+	newNode->prev = list;
+	newNode->next = NULL;
+	newNode->data = elem;
 }
 
 
-void* M_list_pop(M_list_t** pList) {
+void* M_list_pop(M_list_t* list) {
+
 	void* res;
-	M_list_t* tmp;
 
-	M_assert(pList != NULL, "You have to give a valid pointer to a list pointer !");
+	M_assert(!M_list_isEmpty(list), "Empty list.");
 
+	list = M_list_tail(list);
+	res  = M_list_get(list);
 
-	if (*pList == EMPTY_LIST) {
-		M_error("Popping from empty list.");
-	}
-
-	/* remove element */
-	else {
-		tmp = M_list_tail(*pList);
-		res = M_list_get(tmp);
-
-		if (tmp->prev != EMPTY_LIST) {
-			tmp = M_list_prev(tmp);
-			free(tmp->next);
-			tmp->next = NULL;
-		}
-
-		/* special case if it was the last item */
-		else {
-			*pList = NULL;
-			free(tmp);
-		}
-	}
+	list->prev->next = NULL;
+	free(list);
 
 	return res;
 }
 
 
 
-void M_list_add(M_list_t** pList, void* elem) {
+void M_list_add(M_list_t* list, void* elem) {
 	
-	M_list_t *tmp;
+	M_list_t* newNode = malloc(sizeof(M_list_t));
+	list = M_list_head(list);
 
-	M_assert(pList != NULL, "You have to give a valid pointer to a list pointer !");
-
-	tmp = *pList;
-	
-	/* add at the begining */
-	*pList = M_list_make(elem);
-	(*pList)->next = tmp;
-	tmp->prev = (*pList);
-	
+	list->prev = newNode;
+	newNode->next = list;
+	newNode->prev = NULL;
+	newNode->data = elem;
 }
 
 
-void* M_list_rem(M_list_t** pList) {
+void* M_list_rem(M_list_t* list) {
 	void* res;
-	M_list_t *tmp;
 
-	M_assert(pList != NULL, "You have to give a valid pointer to a list pointer !");
+	M_assert(!M_list_isEmpty(list), "Empty list.");
 
-	if (*pList == EMPTY_LIST) {
-		M_error("Removing from empty list.");
-	}
-	else {
-		tmp = *pList;
-		res = M_list_get(*pList);
+	list = M_list_head(list);
+	res  = M_list_get(list);
 
-		/* remove the first element */
-		*pList = (*pList)->next;
-		(*pList)->prev = NULL;
-		free(tmp);
-	}
-
+	list->next->prev = NULL;
+	free(list);
+	
 	return res;
 }
 
@@ -218,6 +190,8 @@ void* M_list_rem(M_list_t** pList) {
 void M_list_concat(M_list_t* l1, M_list_t* l2) {
 
 	l1 = M_list_tail(l1);
+	l2 = M_list_head(l2);
+
 	l1->next = l2;
 	l2->prev = l1;
 }
@@ -225,7 +199,8 @@ void M_list_concat(M_list_t* l1, M_list_t* l2) {
 
 size_t M_list_length(M_list_t* list) {
 
-	int i;
+	int i = 0;
+
 	for (i = 0; !M_list_isTail(list); i++)
 		list = M_list_next(list);
 

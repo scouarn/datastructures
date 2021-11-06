@@ -1,4 +1,4 @@
-#include "preint.h"
+#include "bigint.h"
 #include "errors.h"
 
 #include <math.h>

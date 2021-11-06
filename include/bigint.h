@@ -1,5 +1,5 @@
-#ifndef _INT_H_
-#define _INT_H_
+#ifndef _BIGINT_H_
+#define _BIGINT_H_
 
 typedef struct __M_int_t__ M_int_t;
 
@@ -26,4 +26,4 @@ int M_int_sqt(M_int_t* res, M_int_t* num);
 
 
 
-#endif /* int_h */
+#endif /* bigint_h */
