@@ -5,8 +5,15 @@
 #include <stdio.h>
 #include <time.h>
 
+/* defined here :
+ * M_throw
+ * M_assert
+ * M_error
+ * M_warning				 */
 
-/* has to be a macro to now what __FILE__ is... */
+
+#ifdef M_DEBUG
+
 #define M_throw(type, message) {\
 	char buffer[16];\
 	time_t sec = time(NULL);\
@@ -14,6 +21,32 @@
 	strftime(buffer, 16, "%H:%M:%S", tm_info);\
 	fprintf(stderr, "[%s - %s - %s] %s : %s\n", buffer, __FILE__, __func__, type, message);\
 }\
+
+#define M_assert(test, message) {\
+	if (!(test)) {\
+		M_throw("FAILED TO ASSERT " #test, message);\
+		exit(EXIT_FAILURE);\
+	}\
+}\
+
+#else
+
+#define M_throw(type, message) {\
+	char buffer[16];\
+	time_t sec = time(NULL);\
+	struct tm* tm_info = localtime(&sec);\
+	strftime(buffer, 16, "%H:%M:%S", tm_info);\
+	fprintf(stderr, "[%s] %s : %s\n", buffer, type, message);\
+}\
+
+#define M_assert(test, message) {\
+	if (!(test)) {\
+		M_error(message);\
+	}\
+}\
+
+#endif
+
 
 
 #define M_error(message) {\
@@ -26,12 +59,6 @@
 }\
 
 
-#define M_assert(test, message) {\
-	if (!(test)) {\
-		M_throw("FAILED TO ASSERT " #test, message);\
-		exit(EXIT_FAILURE);\
-	}\
-}\
 
 
 

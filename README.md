@@ -12,6 +12,8 @@ Collection of various handy cross-platform pieces of code about data manipulatio
 
 ## TODO :
 
+* redo lists...
+
 * queue
 * dictionnary -- hashtable with string and no hash overlap
 * matrix
@@ -20,3 +22,7 @@ Collection of various handy cross-platform pieces of code about data manipulatio
 * threadpool
 * tree
 * common algorithms
+* random numbers
+* diff equations
+* complexe numbers
+* special functions
