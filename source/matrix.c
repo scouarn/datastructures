@@ -12,8 +12,8 @@ M_mat_t* M_mat_make(int rows, int cols) {
 	
 	/* hide size in the first two cells of array */
 	mat += 2;
-	mat[-1] = (M_mat_t)rows;
-	mat[-2] = (M_mat_t)cols;
+	mat[-1] = (double*)(long)rows;
+	mat[-2] = (double*)(long)cols;
 
 	mat[0] = malloc( rows * cols * sizeof(double) );
 
@@ -30,8 +30,8 @@ M_mat_t* M_mat_fromArray(double* data, int rows, int cols) {
 	
 	/* hide size in the first two cells of array */
 	mat += 2;
-	mat[-1] = (M_mat_t)rows;
-	mat[-2] = (M_mat_t)cols;
+	mat[-1] = (double*)(long)rows;
+	mat[-2] = (double*)(long)cols;
 
 	mat[0] = data;
 
@@ -48,8 +48,8 @@ void M_mat_free(M_mat_t* mat) {
 }
 
 void M_mat_size(M_mat_t* mat, int* rows, int* cols) {
-	*rows = (int)mat[-1];
-	*cols = (int)mat[-2];
+	*rows = (int)(long)mat[-1];
+	*cols = (int)(long)mat[-2];
 }
 
 
