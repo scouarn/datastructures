@@ -8,7 +8,7 @@ Collection of various handy cross-platform pieces of code about data manipulatio
 * linked list
 * hashtable
 * stack
-
+* matrix
 
 ## TODO :
 
@@ -16,7 +16,6 @@ Collection of various handy cross-platform pieces of code about data manipulatio
 
 * queue
 * dictionnary -- hashtable with string and no hash overlap
-* matrix
 * arbitrary precision int
 * strings
 * threadpool
