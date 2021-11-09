@@ -42,8 +42,17 @@ M_hshtbl_t* M_hshtbl_nMake(size_t size) {
 
 
 void M_hshtbl_free(M_hshtbl_t* table) {
-	
-	M_warning("TODO : FREE THE LISTS");
+	int i; _list* node; _list* temp;
+
+	for (i = 0; i < table->size; i++) {
+		node = &(table->array[i]);
+
+		while (node != NULL) {
+			temp = node;
+			node = node->next;
+			free(temp); 
+		}
+	}
 
 	free(table->array);
 	free(table);
@@ -58,7 +67,7 @@ static _list* find(M_hshtbl_t *table, size_t hash) {
 
 	_list* node = &(table->array[index]);
 
-	while (node->next != NULL  /* stop if the tail is reach or the key foud */
+	while (node->next != NULL  /* stop if the tail is reach or the key found */
 	    && node->hash != hash)
 
 		node = node->next;

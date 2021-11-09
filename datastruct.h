@@ -2,8 +2,6 @@
 #ifndef _DATASTRUCT_H_
 #define _DATASTRUCT_H_
 
-
-#include "include/bigint.h"
 #include "include/errors.h"
 #include "include/hshtbl.h"
 #include "include/list.h"
