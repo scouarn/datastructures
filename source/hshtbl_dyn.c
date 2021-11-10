@@ -1,6 +1,7 @@
 #include "hshtbl.h"
 #include "errors.h"
 
+
 /* I decided not to rely on the linked list functions
  * already implemented in order to keep this module 
  * self-contained */
@@ -112,27 +113,21 @@ void M_hshtbl_dyn_add(M_hshtbl_dyn_t* table, size_t hash, void* value) {
 }
 
 
-bool M_hshtbl_dyn_forceAdd(M_hshtbl_dyn_t* table, size_t hash, void* value) {
+void M_hshtbl_dyn_forceAdd(M_hshtbl_dyn_t* table, size_t hash, void* value) {
 
-	bool res;
 	_list* node = find(table, hash);
 
 
 	/* key not in table, leave a new available node */
 	if (node->next == NULL)  {
-		res = true;
 		node->next = malloc(sizeof(_list));
 		node->next->next = NULL;
-	}
-	else {
-		res = false;
 	}
 
 	/* either case set the node */
 	node->value = value;
 	node->hash  = hash;
 
-	return res;
 }
 
 
@@ -157,7 +152,7 @@ void M_hshtbl_dyn_rem(M_hshtbl_dyn_t* table, size_t hash) {
 
 
 
-bool M_hshtbl_dyn_forceRem(M_hshtbl_dyn_t* table, size_t hash) {
+void M_hshtbl_dyn_forceRem(M_hshtbl_dyn_t* table, size_t hash) {
 
 	_list* next;
 	_list* node = find(table, hash);
@@ -172,15 +167,7 @@ bool M_hshtbl_dyn_forceRem(M_hshtbl_dyn_t* table, size_t hash) {
 		node->next  = next->next;
 
 		free(next);
-
-		return true;
 	}
-
-	else {
-
-		return false;
-	}
-
 
 
 }

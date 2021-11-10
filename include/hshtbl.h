@@ -66,15 +66,14 @@ void M_hshtbl_add(M_hshtbl_t* table, size_t key, void* value);
 /* remove from table, return false if it not in table  */
 void M_hshtbl_rem(M_hshtbl_t* table, size_t key);
 
-/* check if present in the table */
-bool  M_hshtbl_mem(M_hshtbl_t* table, size_t key); 
-
 /* if not in table, add it and return true, else change and return false */
-bool M_hshtbl_forceAdd(M_hshtbl_t* table, size_t key, void* value);
+void M_hshtbl_forceAdd(M_hshtbl_t* table, size_t key, void* value);
 
 /* if not in table, remove it and return true, else do nothing and return false */
-bool M_hshtbl_forceRem(M_hshtbl_t* table, size_t key);
+void M_hshtbl_forceRem(M_hshtbl_t* table, size_t key);
 
+/* check if present in the table */
+bool  M_hshtbl_mem(M_hshtbl_t* table, size_t key); 
 
 
 #endif /* hshtbl_h */

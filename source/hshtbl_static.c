@@ -1,7 +1,6 @@
 #include "hshtbl.h"
 #include "errors.h"
 
-#include <stdbool.h>
 
 #define M_HSHTBL_DEFAULT_SIZE 1024
 
@@ -103,14 +102,11 @@ void M_hshtbl_static_add(M_hshtbl_static_t* table, size_t hash, void* value) {
 }
 
 
-bool M_hshtbl_static_forceAdd(M_hshtbl_static_t* table, size_t hash, void* value) {
+void M_hshtbl_static_forceAdd(M_hshtbl_static_t* table, size_t hash, void* value) {
 
-	bool res;
 	size_t loc = find(table, hash);
 
 	M_assert(loc < table->size, "Table full.");
-
-	res = table->array[loc].used; 
 
 	while (table->array[loc].used) {
 		loc++;
@@ -121,7 +117,6 @@ bool M_hshtbl_static_forceAdd(M_hshtbl_static_t* table, size_t hash, void* value
 	table->array[loc].used = true;
 	table->array[loc].val = value;
 
-	return res;
 }
 
 
@@ -136,19 +131,13 @@ void M_hshtbl_static_rem(M_hshtbl_static_t* table, size_t hash) {
 
 
 
-bool M_hshtbl_static_forceRem(M_hshtbl_static_t* table, size_t hash) {
+void M_hshtbl_static_forceRem(M_hshtbl_static_t* table, size_t hash) {
 
 	size_t loc = find(table, hash);
 	
 	/* if in table remove node */
-	if (loc == table->size || table->array[loc].used) {
+	if (loc == table->size) {
 		table->array[loc].used = false;
-		return true;
-	}
-
-	/* do nothing */
-	else {
-		return false;
 	}
 
 }
