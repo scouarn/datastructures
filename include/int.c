@@ -7,7 +7,7 @@
 
 typedef struct __M_int_t__ M_int_t;
 
-
+/* size is in bytes, will be rounded up if needed */
 M_int_t* M_int_make(long size, long init_value);
 void M_int_free (M_int_t* num);
 void M_int_print(M_int_t* num);

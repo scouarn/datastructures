@@ -9,19 +9,22 @@ Collection of various handy cross-platform pieces of code about data manipulatio
 * hashtable
 * stack
 * matrix
+* dict
 
 ## TODO :
 
 * redo lists...
+* dynamic dict and hshtbl resize ==> + merge everything
 
-* dictionnary -- hashtable with string and no hash overlap
+* bitfield
 * queue
 * arbitrary precision int
-* strings
 * threadpool
+* strings
 * tree
-* common algorithms
+
 * random numbers
-* diff equations
+* common algorithms
 * complexe numbers
 * special functions
+* diff equations

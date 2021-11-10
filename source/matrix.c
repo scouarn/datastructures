@@ -8,7 +8,7 @@
 M_mat_t* M_mat_make(int rows, int cols) {
 
 	int i;
-	M_mat_t* mat = malloc( rows * sizeof(double*) + 2*sizeof(int) );
+	M_mat_t* mat = malloc( (rows+2) * sizeof(double*) );
 	
 	/* hide size in the first two cells of array */
 	mat += 2;

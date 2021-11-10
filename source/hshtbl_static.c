@@ -11,7 +11,7 @@ typedef struct  {
 } _pair;
 
 
-typedef struct __M_hshtble_static_t__ {
+typedef struct __M_hshtbl_static_t__ {
 	_pair *array;
 	size_t size;
 } M_hshtbl_static_t;
@@ -21,7 +21,7 @@ typedef struct __M_hshtble_static_t__ {
 
 M_hshtbl_static_t* M_hshtbl_static_nmake(size_t size) {
 	int i;
-	M_hshtbl_static_t* table = malloc( (size+2) * sizeof(M_hshtbl_static_t) );
+	M_hshtbl_static_t* table = malloc(sizeof(M_hshtbl_static_t));
 	
 	table->array = malloc(size * sizeof(_pair));
 	table->size = size;
