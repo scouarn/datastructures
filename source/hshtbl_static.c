@@ -70,7 +70,7 @@ void* M_hshtbl_static_get(M_hshtbl_static_t *table, size_t hash) {
 
 	size_t loc = find(table, hash);
 
-	M_assert(table->array[loc].used == true, 
+	M_assert(loc < table->size && table->array[loc].used == true, 
 		"Key not in table.");
 
 	return table->array[loc].val;
@@ -81,7 +81,7 @@ void M_hshtbl_static_set(M_hshtbl_static_t* table, size_t hash, void* value) {
 
 	size_t loc = find(table, hash);
 
-	M_assert(table->array[loc].used == true,
+	M_assert(loc < table->size && table->array[loc].used == true,
 		"Key not in table.");
 
 	table->array[loc].val = value;
@@ -92,15 +92,11 @@ void M_hshtbl_static_add(M_hshtbl_static_t* table, size_t hash, void* value) {
 
 	size_t loc = find(table, hash);
 
+	M_assert(loc < table->size, "Table full.");
+
 	M_assert(table->array[loc].used == false, 
 		"Key already in table.");
-
-
-	while (table->array[loc].used) {
-		loc++;
-		M_assert(loc < table->size, "Table full.");
-	}
-
+	
 	table->array[loc].val = value;
 	table->array[loc].key = hash;
 	table->array[loc].used = true;
@@ -112,28 +108,18 @@ bool M_hshtbl_static_forceAdd(M_hshtbl_static_t* table, size_t hash, void* value
 	bool res;
 	size_t loc = find(table, hash);
 
+	M_assert(loc < table->size, "Table full.");
 
-	/* key not in table, leave a new available node */
-	if (loc == table->size)  {
+	res = table->array[loc].used; 
 
-		loc = hash % table->size;
-		while (table->array[loc].used) {
-			loc++;
-			M_assert(loc < table->size, "Table full.");
-		}
-
-		table->array[loc].key = hash;
-		table->array[loc].used = true;
-
-		res = true;
-
-	}
-	else {
-		res = false;
+	while (table->array[loc].used) {
+		loc++;
+		M_assert(loc < table->size, "Table full.");
 	}
 
+	table->array[loc].key = hash;
+	table->array[loc].used = true;
 	table->array[loc].val = value;
-
 
 	return res;
 }
@@ -142,7 +128,7 @@ bool M_hshtbl_static_forceAdd(M_hshtbl_static_t* table, size_t hash, void* value
 void M_hshtbl_static_rem(M_hshtbl_static_t* table, size_t hash) {
 
 	size_t loc = find(table, hash);
-	M_assert(table->array[loc].used == true, 
+	M_assert(loc < table->size && table->array[loc].used == true, 
 		"Key not in table.");
 
 	table->array[loc].used = false;
@@ -153,10 +139,9 @@ void M_hshtbl_static_rem(M_hshtbl_static_t* table, size_t hash) {
 bool M_hshtbl_static_forceRem(M_hshtbl_static_t* table, size_t hash) {
 
 	size_t loc = find(table, hash);
-	M_assert(loc < table->size, "Key not in table.");
-
+	
 	/* if in table remove node */
-	if (loc == table->size) {
+	if (loc == table->size || table->array[loc].used) {
 		table->array[loc].used = false;
 		return true;
 	}
@@ -166,12 +151,13 @@ bool M_hshtbl_static_forceRem(M_hshtbl_static_t* table, size_t hash) {
 		return false;
 	}
 
-
 }
+
 
 bool M_hshtbl_static_mem(M_hshtbl_static_t* table, size_t hash) {
 
 	size_t loc = find(table, hash);
-	return loc < table->size;
+
+	return loc < table->size && table->array[loc].used == true;
 }
 
