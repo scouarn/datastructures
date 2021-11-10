@@ -17,10 +17,10 @@ TEST = test
 
 
 .PHONY: all
-all : $(LIB_SO) $(TEST)
+all : $(OBJ_DIR) $(LIB_SO) $(TEST)
 
 .PHONY: lib
-lib : $(LIB_SO)
+lib : $(OBJ_DIR) $(LIB_SO)
 
 
 .PHONY : install
@@ -39,11 +39,11 @@ $(TEST) : $(LIB_SO) $(OBJ_DIR)$(TEST).o
 	$(CC) $(CFLAGS) $(LINK) -I$(INC_DIR) -L./ $(LIB_LN) -o $@ $^
 
 
-
 $(OBJ_DIR)%.o : $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) -I$(INC_DIR) -fpic -c -o $@ $<
 
-
+$(OBJ_DIR) :
+	mkdir $(OBJ_DIR)
 
 clean :
 	rm -f */*.o $(TEST) $(LIB_SO)

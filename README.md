@@ -13,10 +13,9 @@ Collection of various handy cross-platform pieces of code about data manipulatio
 ## TODO :
 
 * redo lists...
-* test static hashtable and put it in a different module / macros to switch between the two implementations
 
-* queue
 * dictionnary -- hashtable with string and no hash overlap
+* queue
 * arbitrary precision int
 * strings
 * threadpool

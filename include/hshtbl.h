@@ -13,13 +13,43 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-typedef struct __M_hshtbl_t__ M_hshtbl_t;
+#ifdef M_HSHTBL_STATIC 
+    typedef struct __M_hshtbl_static_t__ M_hshtbl_t;
+
+    #define M_hshtbl_make      M_hshtbl_static_make
+    #define M_hshtbl_nmake     M_hshtbl_static_nmake
+    #define M_hshtbl_resize    M_hshtbl_static_resize
+    #define M_hshtbl_free      M_hshtbl_static_free
+    #define M_hshtbl_get       M_hshtbl_static_get
+    #define M_hshtbl_set       M_hshtbl_static_set
+    #define M_hshtbl_add       M_hshtbl_static_add
+    #define M_hshtbl_rem       M_hshtbl_static_rem
+    #define M_hshtbl_mem       M_hshtbl_static_mem
+    #define M_hshtbl_forceAdd  M_hshtbl_static_forceAdd
+    #define M_hshtbl_forceRem  M_hshtbl_static_forceRem
+
+ 
+#else 
+    typedef struct __M_hshtbl_dyn_t__ M_hshtbl_t;
+
+    #define M_hshtbl_make      M_hshtbl_dyn_make
+    #define M_hshtbl_nmake     M_hshtbl_dyn_nmake
+    #define M_hshtbl_resize    M_hshtbl_dyn_resize
+    #define M_hshtbl_free      M_hshtbl_dyn_free
+    #define M_hshtbl_get       M_hshtbl_dyn_get
+    #define M_hshtbl_set       M_hshtbl_dyn_set
+    #define M_hshtbl_add       M_hshtbl_dyn_add
+    #define M_hshtbl_rem       M_hshtbl_dyn_rem
+    #define M_hshtbl_mem       M_hshtbl_dyn_mem
+    #define M_hshtbl_forceAdd  M_hshtbl_dyn_forceAdd
+    #define M_hshtbl_forceRem  M_hshtbl_dyn_forceRem
+
+#endif
 
 
-#define M_HSHTBL_DEFAULT_SIZE 1024
 
 M_hshtbl_t* M_hshtbl_make();
-M_hshtbl_t* M_hshtbl_nMake(size_t size);
+M_hshtbl_t* M_hshtbl_nmake(size_t size);
 M_hshtbl_t* M_hshtbl_resize(M_hshtbl_t* table); /* reallocate it in an array that fits the data better */
 void M_hshtbl_free(M_hshtbl_t* table);
 
@@ -44,6 +74,7 @@ bool M_hshtbl_forceAdd(M_hshtbl_t* table, size_t key, void* value);
 
 /* if not in table, remove it and return true, else do nothing and return false */
 bool M_hshtbl_forceRem(M_hshtbl_t* table, size_t key);
+
 
 
 #endif /* hshtbl_h */

@@ -9,6 +9,7 @@
  * is a list of (key, val) pairs with the last node always
  * left available to add an element into. */
 
+#define M_HSHTBL_DEFAULT_SIZE 1024
 
 typedef struct __list__ {
 	size_t hash;
@@ -17,22 +18,18 @@ typedef struct __list__ {
 } _list;
 
 
-struct __M_hshtbl_t__ {
+typedef struct __M_hshtbl_dyn_t__ {
 	_list *array;
 	size_t size;
 
-};
+} M_hshtbl_dyn_t;
 
 
 
-M_hshtbl_t* M_hshtbl_make() {
-	return M_hshtbl_nMake(M_HSHTBL_DEFAULT_SIZE); 
-}
 
+M_hshtbl_dyn_t* M_hshtbl_dyn_nmake(size_t size) {
 
-M_hshtbl_t* M_hshtbl_nMake(size_t size) {
-
-	M_hshtbl_t* table = malloc(sizeof(M_hshtbl_t));
+	M_hshtbl_dyn_t* table = malloc(sizeof(M_hshtbl_dyn_t));
 	
 	table->array = calloc(size, sizeof(_list));
 	table->size = size;
@@ -41,11 +38,15 @@ M_hshtbl_t* M_hshtbl_nMake(size_t size) {
 }
 
 
-void M_hshtbl_free(M_hshtbl_t* table) {
+M_hshtbl_dyn_t* M_hshtbl_dyn_make() {
+	return M_hshtbl_dyn_nmake(M_HSHTBL_DEFAULT_SIZE); 
+}
+
+void M_hshtbl_dyn_free(M_hshtbl_dyn_t* table) {
 	int i; _list* node; _list* temp;
 
 	for (i = 0; i < table->size; i++) {
-		node = &(table->array[i]);
+		node = table->array[i].next;
 
 		while (node != NULL) {
 			temp = node;
@@ -61,7 +62,7 @@ void M_hshtbl_free(M_hshtbl_t* table) {
 
 /* utility to find where a key is located, 
  * return the tail of the list if not found */
-static _list* find(M_hshtbl_t *table, size_t hash) {
+static _list* find(M_hshtbl_dyn_t *table, size_t hash) {
 
 	size_t index = hash % table->size;
 
@@ -76,7 +77,7 @@ static _list* find(M_hshtbl_t *table, size_t hash) {
 }
 
 
-void* M_hshtbl_get(M_hshtbl_t *table, size_t hash) {
+void* M_hshtbl_dyn_get(M_hshtbl_dyn_t *table, size_t hash) {
 
 	_list* node = find(table, hash);
 
@@ -86,17 +87,17 @@ void* M_hshtbl_get(M_hshtbl_t *table, size_t hash) {
 }
 
 
-void M_hshtbl_set(M_hshtbl_t* table, size_t hash, void* value) {
+void M_hshtbl_dyn_set(M_hshtbl_dyn_t* table, size_t hash, void* value) {
 
 	_list* node = find(table, hash);
 
 	M_assert(node->next != NULL, "Key not in table.");
 
-	node->value = value;	
+	node->value = value;
 }
 
 
-void M_hshtbl_add(M_hshtbl_t* table, size_t hash, void* value) {
+void M_hshtbl_dyn_add(M_hshtbl_dyn_t* table, size_t hash, void* value) {
 
 	_list* node = find(table, hash);
 
@@ -111,7 +112,7 @@ void M_hshtbl_add(M_hshtbl_t* table, size_t hash, void* value) {
 }
 
 
-bool M_hshtbl_forceAdd(M_hshtbl_t* table, size_t hash, void* value) {
+bool M_hshtbl_dyn_forceAdd(M_hshtbl_dyn_t* table, size_t hash, void* value) {
 
 	bool res;
 	_list* node = find(table, hash);
@@ -135,7 +136,7 @@ bool M_hshtbl_forceAdd(M_hshtbl_t* table, size_t hash, void* value) {
 }
 
 
-void M_hshtbl_rem(M_hshtbl_t* table, size_t hash) {
+void M_hshtbl_dyn_rem(M_hshtbl_dyn_t* table, size_t hash) {
 	_list* next;
 	_list* node = find(table, hash);
 
@@ -156,7 +157,7 @@ void M_hshtbl_rem(M_hshtbl_t* table, size_t hash) {
 
 
 
-bool M_hshtbl_forceRem(M_hshtbl_t* table, size_t hash) {
+bool M_hshtbl_dyn_forceRem(M_hshtbl_dyn_t* table, size_t hash) {
 
 	_list* next;
 	_list* node = find(table, hash);
@@ -184,7 +185,7 @@ bool M_hshtbl_forceRem(M_hshtbl_t* table, size_t hash) {
 
 }
 
-bool M_hshtbl_mem(M_hshtbl_t* table, size_t hash) {
+bool M_hshtbl_dyn_mem(M_hshtbl_dyn_t* table, size_t hash) {
 
 	_list* node = find(table, hash);
 
