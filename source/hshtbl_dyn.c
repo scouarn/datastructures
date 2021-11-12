@@ -1,58 +1,53 @@
+
+#define M_HSHTBL_DEFAULT_SIZE 1024
+
+#include <stdbool.h>
+
+typedef struct __pair__ {
+	long  key;
+	void* val;
+	struct __pair__ *next;
+} _pair;
+
+
+struct __M_hshtbl_dyn_t__ {
+	_pair *array;
+	long size;
+
+};
+
 #include "hshtbl.h"
 #include "errors.h"
 
 
-/* I decided not to rely on the linked list functions
- * already implemented in order to keep this module 
- * self-contained */
 
-/* In this implementation, each cell of the talbe
- * is a list of (key, val) pairs with the last node always
- * left available to add an element into. */
+M_hshtbl_t* M_hshtbl_nmake(long size) {
 
-#define M_HSHTBL_DEFAULT_SIZE 1024
-
-typedef struct __list__ {
-	size_t hash;
-	void* value;
-	struct __list__ *next;
-} _list;
-
-
-typedef struct __M_hshtbl_dyn_t__ {
-	_list *array;
-	size_t size;
-
-} M_hshtbl_dyn_t;
-
-
-
-
-M_hshtbl_dyn_t* M_hshtbl_dyn_nmake(size_t size) {
-
-	M_hshtbl_dyn_t* table = malloc(sizeof(M_hshtbl_dyn_t));
+	M_hshtbl_t* table = malloc(sizeof(M_hshtbl_t));
 	
-	table->array = calloc(size, sizeof(_list));
+	table->array = calloc(size, sizeof(_pair));
 	table->size = size;
 
 	return table;
 }
 
 
-M_hshtbl_dyn_t* M_hshtbl_dyn_make() {
-	return M_hshtbl_dyn_nmake(M_HSHTBL_DEFAULT_SIZE); 
+M_hshtbl_t* M_hshtbl_make() {
+	return M_hshtbl_nmake(M_HSHTBL_DEFAULT_SIZE);
 }
 
-void M_hshtbl_dyn_free(M_hshtbl_dyn_t* table) {
-	int i; _list* node; _list* temp;
+void M_hshtbl_free(M_hshtbl_t* table) {
 
+	/* free lists*/
+	int i;
 	for (i = 0; i < table->size; i++) {
-		node = table->array[i].next;
+		_pair* temp;
+		_pair* node = table->array[i].next;
 
 		while (node != NULL) {
 			temp = node;
-			node = node->next;
-			free(temp); 
+			node = temp->next;
+			free(temp);
 		}
 	}
 
@@ -61,121 +56,115 @@ void M_hshtbl_dyn_free(M_hshtbl_dyn_t* table) {
 }
 
 
-/* utility to find where a key is located, 
- * return the tail of the list if not found */
-static _list* find(M_hshtbl_dyn_t *table, size_t hash) {
+M_hshtbl_t* M_hshtbl_resize(M_hshtbl_t* table, long size) {
 
-	size_t index = hash % table->size;
+	M_hshtbl_t* new_table = M_hshtbl_nmake(size);
 
-	_list* node = &(table->array[index]);
+	int i;
+	for (i = 0; i < table->size; i++) {
+		_pair* node = &(table->array[i]);
 
-	while (node->next != NULL  /* stop if the tail is reach or the key found */
-	    && node->hash != hash)
+		while (node->next != NULL) {
+			M_hshtbl_add(new_table, node->key, node->val);
+			node = node->next;
+		}
+
+	}
+
+
+
+	M_hshtbl_free(table);
+	return new_table;
+}
+
+
+/* return the (unused) list tail if not found */
+static _pair* find(M_hshtbl_t *table, long key) {
+
+	_pair* node;
+	long index = key % table->size;
+
+
+	/* stop if the end of the list is reach or the key found */	
+	node = &(table->array[index]);
+
+	while (node->next != NULL
+	    && node->key  != key) {
 
 		node = node->next;
-
+	}
+	
 	return node;
 }
 
 
-void* M_hshtbl_dyn_get(M_hshtbl_dyn_t *table, size_t hash) {
+void* M_hshtbl_get(M_hshtbl_t *table, long key) {
+	_pair* p = find(table, key);
 
-	_list* node = find(table, hash);
-
-	M_assert(node->next != NULL, "Key not in table.");
-
-	return node->value;
-}
-
-
-void M_hshtbl_dyn_set(M_hshtbl_dyn_t* table, size_t hash, void* value) {
-
-	_list* node = find(table, hash);
-
-	M_assert(node->next != NULL, "Key not in table.");
-
-	node->value = value;
-}
-
-
-void M_hshtbl_dyn_add(M_hshtbl_dyn_t* table, size_t hash, void* value) {
-
-	_list* node = find(table, hash);
-
-	M_assert(node->next == NULL, "Key already in table.");
-
-	node->value = value;
-	node->hash  = hash;
-
-	/* leave a new available node */
-	node->next = malloc(sizeof(_list));
-	node->next->next = NULL;
-}
-
-
-void M_hshtbl_dyn_forceAdd(M_hshtbl_dyn_t* table, size_t hash, void* value) {
-
-	_list* node = find(table, hash);
-
-
-	/* key not in table, leave a new available node */
-	if (node->next == NULL)  {
-		node->next = malloc(sizeof(_list));
-		node->next->next = NULL;
+	if (p->next == NULL) { /* if not in table */
+		return NULL;
 	}
 
-	/* either case set the node */
-	node->value = value;
-	node->hash  = hash;
-
+	return p->val;
 }
 
 
-void M_hshtbl_dyn_rem(M_hshtbl_dyn_t* table, size_t hash) {
-	_list* next;
-	_list* node = find(table, hash);
+bool M_hshtbl_set(M_hshtbl_t* table, long key, void* value) {
+	_pair* p = find(table, key);
 
-	M_assert(node->next != NULL, "Key not in table.");
+	if (p->next == NULL) { /* if not in table */
+		return false;
+	}
 
-	/* list surgery to remove the node : override it with the next one */
-	next = node->next;
+	p->val = value;
 
-	node->hash  = next->hash;
-	node->value = next->value;
-	node->next  = next->next;
+	return true;
+}
+
+
+bool M_hshtbl_add(M_hshtbl_t* table, long key, void* value) {
+	_pair* p = find(table, key);
+
+	if (p->next != NULL) { /* if already in table */
+		return false;
+	}
+
+	p->key = key;
+	p->val = value;
+
+	p->next = malloc(sizeof(_pair));
+	p->next->next = NULL;
+
+	return true;
+}
+
+
+
+bool M_hshtbl_rem(M_hshtbl_t* table, long key) {
+	_pair* next;
+	_pair* p = find(table, key);
+
+	if (p->next == NULL) { /* if not in table */
+		return false;
+	}
+
+	next = p->next;
+
+	/* to delete p, replace p by p->next */
+	p->key  = next->key;
+	p->val  = next->val;
+	p->next = next->next;
 
 	free(next);
 
-	/* should be correct even if it is overridden by the last node */
-
+	return true;
 }
 
 
+bool M_hshtbl_mem(M_hshtbl_t* table, long key) {
 
-void M_hshtbl_dyn_forceRem(M_hshtbl_dyn_t* table, size_t hash) {
+	_pair* p = find(table, key);
 
-	_list* next;
-	_list* node = find(table, hash);
-
-	/* if in table remove node */
-	if (node->next != NULL) {
-
-		next = node->next;
-
-		node->hash  = next->hash;
-		node->value = next->value;
-		node->next  = next->next;
-
-		free(next);
-	}
-
+	return p->next != NULL;
 
 }
-
-bool M_hshtbl_dyn_mem(M_hshtbl_dyn_t* table, size_t hash) {
-
-	_list* node = find(table, hash);
-
-	return node->hash == hash;
-}
-

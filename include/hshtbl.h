@@ -5,13 +5,12 @@
 /* This is a pretty generelize hashtable implementation which only works 
  * with integer keys. An equality test function would be requiered if it
  * was to be done even more general. Here the hash is just the key modulo
- * the size of the table. For string-keyed dictionnary, using a dedicated 
- * module is prefered but you can use a hash of the string as a key if 
- * you know overlaps won't happen. */
+ * the size of the table. */
 
 
-#include <stdlib.h>
 #include <stdbool.h>
+#define M_HSHTBL_DEFAULT_SIZE 1024
+
 
 #ifdef M_HSHTBL_STATIC 
     typedef struct __M_hshtbl_static_t__ M_hshtbl_t;
@@ -47,33 +46,30 @@
 #endif
 
 
-
+/* uses the default size */
 M_hshtbl_t* M_hshtbl_make();
-M_hshtbl_t* M_hshtbl_nmake(size_t size);
-M_hshtbl_t* M_hshtbl_resize(M_hshtbl_t* table); /* reallocate it in an array that fits the data better */
+
+M_hshtbl_t* M_hshtbl_nmake(long size);
 void M_hshtbl_free(M_hshtbl_t* table);
 
+/* a new table is created and the old one is freeed */
+M_hshtbl_t* M_hshtbl_resize(M_hshtbl_t* table, long size);
 
-/* crashes if not found */
-void* M_hshtbl_get(M_hshtbl_t* table, size_t key);
 
-/* crashes if not in table yet */
-void M_hshtbl_set(M_hshtbl_t* table, size_t key, void* value); 
+/* return NULL if not found */
+void* M_hshtbl_get(M_hshtbl_t* table, long key);
 
-/* crashes if already in table */
-void M_hshtbl_add(M_hshtbl_t* table, size_t key, void* value);
+/* return false if not in table yet */
+bool M_hshtbl_set(M_hshtbl_t* table, long key, void* value); 
 
-/* remove from table, return false if it not in table  */
-void M_hshtbl_rem(M_hshtbl_t* table, size_t key);
+/* return false if already in table */
+bool M_hshtbl_add(M_hshtbl_t* table, long key, void* value);
 
-/* if not in table, add it and return true, else change and return false */
-void M_hshtbl_forceAdd(M_hshtbl_t* table, size_t key, void* value);
-
-/* if not in table, remove it and return true, else do nothing and return false */
-void M_hshtbl_forceRem(M_hshtbl_t* table, size_t key);
+/* remove from table, return false if it was not in table */
+bool M_hshtbl_rem(M_hshtbl_t* table, long key);
 
 /* check if present in the table */
-bool  M_hshtbl_mem(M_hshtbl_t* table, size_t key); 
+bool  M_hshtbl_mem(M_hshtbl_t* table, long key); 
 
 
 #endif /* hshtbl_h */

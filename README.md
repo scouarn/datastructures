@@ -13,9 +13,8 @@ Collection of various handy cross-platform pieces of code about data manipulatio
 
 ## TODO :
 
-* redo lists...
-* dynamic dict and hshtbl resize ==> + merge everything
-* have a global flag to choose between the static or dynamic implementation of things (stack, queue, dict, hashtable, int, ...)
+* redo lists : split with single and double linked
+
 
 * bitfield
 * queue
@@ -23,6 +22,9 @@ Collection of various handy cross-platform pieces of code about data manipulatio
 * threadpool
 * strings
 * tree
+
+* finite state automatons
+* regex
 
 * random numbers
 * common algorithms

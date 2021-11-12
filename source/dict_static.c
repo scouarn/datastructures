@@ -1,43 +1,36 @@
-#include "dict.h"
-#include "errors.h"
+/* ADAPTED FROM DICT_STATIC_C */
+
 
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 
-/* ADAPTED FROM HSHTBL_STATIC_C */
+#define M_DICT_STATIC
 
-
-#define M_DICT_DEFAULT_SIZE 1024
-
-typedef struct  {
+typedef struct  { /* the used flag is the key... */
 	const char* key;
-	void* val;
-	bool used;
+	void*  val;
 } _pair;
 
 
-struct __M_dict_t__ {
+struct __M_dict_static_t__ {
 	_pair *array;
-	size_t  size;
+	long size;
 };
 
 
+#include "dict.h"
+#include "errors.h"
 
 
-M_dict_t* M_dict_nmake(size_t size) {
-	int i;
-	M_dict_t* dict = malloc(sizeof(M_dict_t));
+
+M_dict_t* M_dict_nmake(long size) {
+	M_dict_t* table = malloc(sizeof(M_dict_t));
 	
-	dict->array = malloc(size * sizeof(_pair));
-	dict->size = size;
+	table->array = calloc(size, sizeof(_pair));
+	table->size = size;
 
-	for (i = 0; i < size; i++) {
-		dict->array[i].key = 0;
-		dict->array[i].val = 0;
-		dict->array[i].used = false;
-	}
-
-	return dict;
+	return table;
 }
 
 M_dict_t* M_dict_make() {
@@ -46,15 +39,32 @@ M_dict_t* M_dict_make() {
 }
 
 
-void M_dict_free(M_dict_t* dict) {
-	free(dict->array);
-	free(dict);
+M_dict_t* M_dict_resize(M_dict_t* table, long size) {
+
+	int i;
+	M_dict_t* new_table = M_dict_nmake(size);
+
+	for (i = 0; i < table->size; i++) {
+		_pair* p = &(table->array[i]);
+
+		if (p->key != NULL)
+			M_dict_add(new_table, p->key, p->val);
+	}
+
+	M_dict_free(table);
+	return new_table;	
+}
+
+
+void M_dict_free(M_dict_t* table) {
+	free(table->array);
+	free(table);
 }
 
 
 /* http://www.cse.yorku.ca/~oz/hash.html */
-static size_t djb2(const char *str) {
-    size_t hash = 5381;
+static long djb2(const char *str) {
+    long hash = 5381;
     int c;
 
     while ( (c = *str++) )
@@ -65,109 +75,88 @@ static size_t djb2(const char *str) {
 
 
 /* utility to find where a key is located */
-static size_t find(M_dict_t* dict, const char* key) {
+static _pair* find(M_dict_t *table, const char* key) {
 
 	int i;
-	size_t index, hash;
+	long index = djb2(key) % table->size;
 
-	hash = djb2(key);
-	index = hash % dict->size;
+	/* stop if the end of the table is reach or the key found */	
+	i = index;
 
+	while ( table->array[i].key != NULL
+	   &&  0 != strcmp(table->array[i].key, key)) {
 
-	/* stop if the end of the dict is reach or the key found */	
-	for (i = index; i < dict->size; i++) {
+		i = (i+1) % table->size;
 
-		if (dict->array[i].used == false
-		||  0 == strcmp(dict->array[i].key, key))
-			return i;
+		if (i == index) return NULL; /* not found */
 	}
 
-	return dict->size;
+	return &(table->array[i]);
+
+}
+
+void* M_dict_get(M_dict_t *table, const char* key) {
+
+	_pair* p = find(table, key);
+
+	/* not in table */
+	if (p == NULL || p->key == NULL) {
+		return NULL;
+	} 
+
+	return p->val;
 }
 
 
-void* M_dict_get(M_dict_t *dict, const char* key) {
+bool M_dict_set(M_dict_t* table, const char* key, void* value) {
 
-	size_t loc = find(dict, key);
+	_pair* p = find(table, key);
 
-	M_assert(loc < dict->size && dict->array[loc].used == true, 
-		"Key not in dict.");
+	/* not in table */
+	if (p == NULL || p->key == NULL) {
+		return false;
+	} 
 
-	return dict->array[loc].val;
+	p->val = value;
+
+	return true;
 }
 
 
-void M_dict_set(M_dict_t* dict, const char* key, void* value) {
+bool M_dict_add(M_dict_t* table, const char* key, void* value) {
 
-	size_t loc = find(dict, key);
+	_pair* p = find(table, key);
 
-	M_assert(loc < dict->size && dict->array[loc].used == true,
-		"Key not in dict.");
+	/* table full or already in table */
+	if (p == NULL || p->key != NULL) {
+		return false;
+	} 
 
-	dict->array[loc].val = value;
+	p->val = value;
+	p->key = key;
+
+	return true;
 }
 
 
-void M_dict_add(M_dict_t* dict, const char* key, void* value) {
+bool M_dict_rem(M_dict_t* table, const char* key) {
 
-	size_t loc = find(dict, key);
-
-	M_assert(loc < dict->size, "Table full.");
-
-	M_assert(dict->array[loc].used == false, 
-		"Key already in dict.");
+	_pair* p = find(table, key);
 	
-	dict->array[loc].val = value;
-	dict->array[loc].key = key;
-	dict->array[loc].used = true;
+	/* not in table */
+	if (p == NULL || p->key == NULL) {
+		return false;
+	} 
+
+	p->key = NULL;
+
+	return true;
 }
 
+bool M_dict_mem(M_dict_t* table, const char* key) {
 
-void M_dict_forceAdd(M_dict_t* dict, const char* key, void* value) {
+	_pair* p = find(table, key);
 
-	size_t loc = find(dict, key);
-
-	M_assert(loc < dict->size, "Table full.");
-
-	while (dict->array[loc].used) {
-		loc++;
-		M_assert(loc < dict->size, "Table full.");
-	}
-
-	dict->array[loc].key = key;
-	dict->array[loc].used = true;
-	dict->array[loc].val = value;
-
-}
-
-
-void M_dict_rem(M_dict_t* dict, const char* key) {
-
-	size_t loc = find(dict, key);
-	M_assert(loc < dict->size && dict->array[loc].used == true, 
-		"Key not in dict.");
-
-	dict->array[loc].used = false;
-}
-
-
-
-void M_dict_forceRem(M_dict_t* dict, const char* key) {
-
-	size_t loc = find(dict, key);
-	
-	/* if in dict remove node */
-	if (loc == dict->size) {
-		dict->array[loc].used = false;
-	}
-
-}
-
-
-bool M_dict_mem(M_dict_t* dict, const char* key) {
-
-	size_t loc = find(dict, key);
-
-	return loc < dict->size && dict->array[loc].used == true;
+	return p != NULL && p->key == NULL;
 }
 

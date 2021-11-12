@@ -1,152 +1,150 @@
-#include "hshtbl.h"
-#include "errors.h"
 
 
-#define M_HSHTBL_DEFAULT_SIZE 1024
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define M_HSHTBL_STATIC
 
 typedef struct  {
-	size_t key;
+	long key;
 	void*  val;
 	bool  used;
 } _pair;
 
 
-typedef struct __M_hshtbl_static_t__ {
+struct __M_hshtbl_static_t__ {
 	_pair *array;
-	size_t size;
-} M_hshtbl_static_t;
+	long size;
+};
+
+
+#include "hshtbl.h"
+#include "errors.h"
 
 
 
-
-M_hshtbl_static_t* M_hshtbl_static_nmake(size_t size) {
-	int i;
-	M_hshtbl_static_t* table = malloc(sizeof(M_hshtbl_static_t));
+M_hshtbl_t* M_hshtbl_nmake(long size) {
+	M_hshtbl_t* table = malloc(sizeof(M_hshtbl_t));
 	
-	table->array = malloc(size * sizeof(_pair));
+	table->array = calloc(size, sizeof(_pair));
 	table->size = size;
-
-	for (i = 0; i < size; i++) {
-		table->array[i].key = 0;
-		table->array[i].val = 0;
-		table->array[i].used = false;
-	}
 
 	return table;
 }
 
-M_hshtbl_static_t* M_hshtbl_static_make() {
-	M_hshtbl_static_t* t = M_hshtbl_static_nmake(M_HSHTBL_DEFAULT_SIZE); 
+M_hshtbl_t* M_hshtbl_make() {
+	M_hshtbl_t* t = M_hshtbl_nmake(M_HSHTBL_DEFAULT_SIZE); 
 	return t;
 }
 
 
-void M_hshtbl_static_free(M_hshtbl_static_t* table) {
+M_hshtbl_t* M_hshtbl_resize(M_hshtbl_t* table, long size) {
+
+	int i;
+	M_hshtbl_t* new_table = M_hshtbl_nmake(size);
+
+	for (i = 0; i < table->size; i++) {
+		_pair* p = &(table->array[i]);
+
+		if (p->used == true)
+			M_hshtbl_add(new_table, p->key, p->val);
+	}
+
+	M_hshtbl_free(table);
+	return new_table;	
+}
+
+
+void M_hshtbl_free(M_hshtbl_t* table) {
 	free(table->array);
 	free(table);
 }
 
 
 /* utility to find where a key is located */
-static size_t find(M_hshtbl_static_t *table, size_t hash) {
+static _pair* find(M_hshtbl_t *table, long key) {
 
 	int i;
-	size_t index = hash % table->size;
+	long index = key % table->size;
 
 	/* stop if the end of the table is reach or the key found */	
-	for (i = index; i < table->size; i++) {
+	i = index;
 
-		if (table->array[i].key  == hash
-		||  table->array[i].used == false)
-			return i;
+	while (table->array[i].key  != key
+	   &&  table->array[i].used == true) {
+
+		i = (i+1) % table->size;
+
+		if (i == index) return NULL; /* not found */
 	}
+		
+	return &(table->array[i]);
 
-	return table->size;
+}
+
+void* M_hshtbl_get(M_hshtbl_t *table, long key) {
+
+	_pair* p = find(table, key);
+
+	/* not in table */
+	if (p == NULL || !p->used) {
+		return NULL;
+	} 
+
+	return p->val;
 }
 
 
-void* M_hshtbl_static_get(M_hshtbl_static_t *table, size_t hash) {
+bool M_hshtbl_set(M_hshtbl_t* table, long key, void* value) {
 
-	size_t loc = find(table, hash);
+	_pair* p = find(table, key);
 
-	M_assert(loc < table->size && table->array[loc].used == true, 
-		"Key not in table.");
+	/* not in table */
+	if (p == NULL || !p->used) {
+		return false;
+	} 
 
-	return table->array[loc].val;
+	p->val = value;
+
+	return true;
 }
 
 
-void M_hshtbl_static_set(M_hshtbl_static_t* table, size_t hash, void* value) {
+bool M_hshtbl_add(M_hshtbl_t* table, long key, void* value) {
 
-	size_t loc = find(table, hash);
+	_pair* p = find(table, key);
 
-	M_assert(loc < table->size && table->array[loc].used == true,
-		"Key not in table.");
+	/* table full or already in table */
+	if (p == NULL || p->used) {
+		return false;
+	} 
 
-	table->array[loc].val = value;
+	p->val = value;
+	p->key = key;
+	p->used = true;
+
+	return true;
 }
 
 
-void M_hshtbl_static_add(M_hshtbl_static_t* table, size_t hash, void* value) {
+bool M_hshtbl_rem(M_hshtbl_t* table, long key) {
 
-	size_t loc = find(table, hash);
-
-	M_assert(loc < table->size, "Table full.");
-
-	M_assert(table->array[loc].used == false, 
-		"Key already in table.");
+	_pair* p = find(table, key);
 	
-	table->array[loc].val = value;
-	table->array[loc].key = hash;
-	table->array[loc].used = true;
+	/* not in table */
+	if (p == NULL || !p->used) {
+		return false;
+	} 
+
+	p->used = false;
+
+	return true;
 }
 
+bool M_hshtbl_mem(M_hshtbl_t* table, long key) {
 
-void M_hshtbl_static_forceAdd(M_hshtbl_static_t* table, size_t hash, void* value) {
+	_pair* p = find(table, key);
 
-	size_t loc = find(table, hash);
-
-	M_assert(loc < table->size, "Table full.");
-
-	while (table->array[loc].used) {
-		loc++;
-		M_assert(loc < table->size, "Table full.");
-	}
-
-	table->array[loc].key = hash;
-	table->array[loc].used = true;
-	table->array[loc].val = value;
-
-}
-
-
-void M_hshtbl_static_rem(M_hshtbl_static_t* table, size_t hash) {
-
-	size_t loc = find(table, hash);
-	M_assert(loc < table->size && table->array[loc].used == true, 
-		"Key not in table.");
-
-	table->array[loc].used = false;
-}
-
-
-
-void M_hshtbl_static_forceRem(M_hshtbl_static_t* table, size_t hash) {
-
-	size_t loc = find(table, hash);
-	
-	/* if in table remove node */
-	if (loc == table->size) {
-		table->array[loc].used = false;
-	}
-
-}
-
-
-bool M_hshtbl_static_mem(M_hshtbl_static_t* table, size_t hash) {
-
-	size_t loc = find(table, hash);
-
-	return loc < table->size && table->array[loc].used == true;
+	return p != NULL && p->used == true;
 }
 
