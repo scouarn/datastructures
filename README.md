@@ -10,13 +10,13 @@ Collection of various handy cross-platform pieces of code about data manipulatio
 * stack
 * matrix
 * dict
+* bitfield
 
 ## TODO :
 
 * redo lists : split with single and double linked
 
 
-* bitfield
 * queue
 * arbitrary precision int
 * threadpool
