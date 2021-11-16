@@ -2,7 +2,30 @@
 #include "errors.h"
 #include <stdlib.h>
 
+/* safe conversion */
+static double* int_to_ptr(int n) {
 
+	union {
+		int i;
+		double* ptr;
+	} box;
+
+	box.i = n;
+
+	return box.ptr;
+}
+
+static int ptr_to_int(double* p) {
+
+	union {
+		int i;
+		double* ptr;
+	} box;
+
+	box.ptr = p;
+
+	return box.i;
+}
 
 
 M_mat_t* M_mat_make(int rows, int cols) {
@@ -12,8 +35,8 @@ M_mat_t* M_mat_make(int rows, int cols) {
 	
 	/* hide size in the first two cells of array */
 	mat += 2;
-	mat[-1] = (double*)(long)rows;
-	mat[-2] = (double*)(long)cols;
+	mat[-1] = int_to_ptr(rows);
+	mat[-2] = int_to_ptr(cols);
 
 	mat[0] = malloc( rows * cols * sizeof(double) );
 
@@ -48,8 +71,8 @@ void M_mat_free(M_mat_t* mat) {
 }
 
 void M_mat_size(M_mat_t* mat, int* rows, int* cols) {
-	*rows = (int)(long)mat[-1];
-	*cols = (int)(long)mat[-2];
+	*rows = ptr_to_int(mat[-1]);
+	*cols = ptr_to_int(mat[-2]);
 }
 
 
