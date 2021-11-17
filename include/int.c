@@ -8,15 +8,15 @@
 typedef struct __M_int_t__ M_int_t;
 
 /* size is in bytes, will be rounded up if needed */
-M_int_t* M_int_make(long size, long init_value);
+M_int_t* M_int_make(M_uint_t size, M_uint_t init_value);
 void M_int_free (M_int_t* num);
 void M_int_print(M_int_t* num);
 
-long M_int_ladd(M_int_t* res, M_int_t* a, long b);
-long M_int_lsub(M_int_t* res, M_int_t* a, long b);
-long M_int_lmul(M_int_t* res, M_int_t* a, long b);
-long M_int_ldiv(M_int_t* res, M_int_t* a, long b);
-long M_int_lmod(M_int_t* res, M_int_t* a, long b);
+long M_int_ladd(M_int_t* res, M_int_t* a, M_uint_t b);
+long M_int_lsub(M_int_t* res, M_int_t* a, M_uint_t b);
+long M_int_lmul(M_int_t* res, M_int_t* a, M_uint_t b);
+long M_int_ldiv(M_int_t* res, M_int_t* a, M_uint_t b);
+long M_int_lmod(M_int_t* res, M_int_t* a, M_uint_t b);
 
 
 long M_int_cpy(M_int_t* res, M_int_t* num);

@@ -3,11 +3,11 @@
 #include <stdlib.h>
 
 /* safe conversion */
-static double* int_to_ptr(int n) {
+static M_scalar_t* int_to_ptr(M_uint_t n) {
 
 	union {
-		int i;
-		double* ptr;
+		M_uint_t i;
+		M_scalar_t* ptr;
 	} box;
 
 	box.i = n;
@@ -15,11 +15,11 @@ static double* int_to_ptr(int n) {
 	return box.ptr;
 }
 
-static int ptr_to_int(double* p) {
+static M_uint_t ptr_to_int(M_scalar_t* p) {
 
 	union {
-		int i;
-		double* ptr;
+		M_uint_t i;
+		M_scalar_t* ptr;
 	} box;
 
 	box.ptr = p;
@@ -28,17 +28,17 @@ static int ptr_to_int(double* p) {
 }
 
 
-M_mat_t* M_mat_make(int rows, int cols) {
+M_mat_t* M_mat_make(M_uint_t rows, M_uint_t cols) {
 
-	int i;
-	M_mat_t* mat = malloc( (rows+2) * sizeof(double*) );
+	M_uint_t i;
+	M_mat_t* mat = malloc( (rows+2) * sizeof(M_scalar_t*) );
 	
 	/* hide size in the first two cells of array */
 	mat += 2;
 	mat[-1] = int_to_ptr(rows);
 	mat[-2] = int_to_ptr(cols);
 
-	mat[0] = malloc( rows * cols * sizeof(double) );
+	mat[0] = malloc( rows * cols * sizeof(M_uint_t) );
 
 	for (i = 1; i < rows; i++)
 		mat[i] = mat[0] + i*cols;
@@ -46,15 +46,15 @@ M_mat_t* M_mat_make(int rows, int cols) {
 	return (M_mat_t*)mat;
 }
 
-M_mat_t* M_mat_fromArray(double* data, int rows, int cols) {
+M_mat_t* M_mat_fromArray(M_scalar_t* data, M_uint_t rows, M_uint_t cols) {
 
-	int i;
-	M_mat_t* mat = malloc( rows * sizeof(double*) + 2*sizeof(int) );
+	M_uint_t i;
+	M_mat_t* mat = malloc( (rows+2) * sizeof(M_scalar_t*) );
 	
 	/* hide size in the first two cells of array */
 	mat += 2;
-	mat[-1] = (double*)(long)rows;
-	mat[-2] = (double*)(long)cols;
+	mat[-1] = int_to_ptr(rows);
+	mat[-2] = int_to_ptr(cols);
 
 	mat[0] = data;
 
@@ -70,14 +70,14 @@ void M_mat_free(M_mat_t* mat) {
 	free(mat-2);
 }
 
-void M_mat_size(M_mat_t* mat, int* rows, int* cols) {
+void M_mat_size(M_mat_t* mat, M_uint_t* rows, M_uint_t* cols) {
 	*rows = ptr_to_int(mat[-1]);
 	*cols = ptr_to_int(mat[-2]);
 }
 
 
 void M_mat_print(const char* format, M_mat_t* mat) {
-	int i, j, rows, cols;
+	M_uint_t i, j, rows, cols;
 	M_mat_size(mat, &rows, &cols);
 
 	for (i = 0; i < rows; i++) {
@@ -93,7 +93,7 @@ void M_mat_print(const char* format, M_mat_t* mat) {
 }
 
 void M_mat_zero(M_mat_t* mat) {
-	int i, j, rows, cols;
+	M_uint_t i, j, rows, cols;
 	M_mat_size(mat, &rows, &cols);
 
 	for (i = 0; i < rows; i++)
@@ -103,7 +103,7 @@ void M_mat_zero(M_mat_t* mat) {
 
 
 void M_mat_unit(M_mat_t* mat) {
-	int i, rows, cols;
+	M_uint_t i, rows, cols;
 	M_mat_size(mat, &rows, &cols);
 
 	M_assert(rows == cols, "Identity matrix must be square.");
@@ -114,7 +114,7 @@ void M_mat_unit(M_mat_t* mat) {
 
 
 void M_mat_copy(M_mat_t* dst, M_mat_t* src) {
-	int i, j, src_r, src_c, dst_r, dst_c;
+	M_uint_t i, j, src_r, src_c, dst_r, dst_c;
 	M_mat_size(src, &src_r, &src_c);
 	M_mat_size(dst, &dst_r, &dst_c);
 
@@ -129,7 +129,7 @@ void M_mat_copy(M_mat_t* dst, M_mat_t* src) {
 
 
 void M_mat_add(M_mat_t* dst, M_mat_t* a, M_mat_t* b) {
-	int i, j, a_r, a_c, b_r, b_c, dst_r, dst_c;
+	M_uint_t i, j, a_r, a_c, b_r, b_c, dst_r, dst_c;
 	M_mat_t* tmp;
 
 	M_mat_size(a, &a_r, &a_c);
@@ -163,7 +163,7 @@ void M_mat_add(M_mat_t* dst, M_mat_t* a, M_mat_t* b) {
 
 
 void M_mat_scale(M_mat_t* dst, M_mat_t* src, double a) {
-	int i, j, src_r, src_c, dst_r, dst_c;
+	M_uint_t i, j, src_r, src_c, dst_r, dst_c;
 	M_mat_size(src, &src_r, &src_c);
 	M_mat_size(dst, &dst_r, &dst_c);
 
@@ -177,7 +177,7 @@ void M_mat_scale(M_mat_t* dst, M_mat_t* src, double a) {
 
 
 void M_mat_trans(M_mat_t* dst, M_mat_t* src) {
-	int i, j, src_r, src_c, dst_r, dst_c;
+	M_uint_t i, j, src_r, src_c, dst_r, dst_c;
 	M_mat_t* tmp;
 
 	M_mat_size(src, &src_r, &src_c);
@@ -207,7 +207,7 @@ void M_mat_trans(M_mat_t* dst, M_mat_t* src) {
 
 
 void M_mat_mul(M_mat_t* dst, M_mat_t* a, M_mat_t* b) {
-	int i, j, k, a_r, a_c, b_r, b_c, dst_r, dst_c;
+	M_uint_t i, j, k, a_r, a_c, b_r, b_c, dst_r, dst_c;
 	M_mat_t* tmp;
 
 	M_mat_size(a, &a_r, &a_c);

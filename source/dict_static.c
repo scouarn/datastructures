@@ -2,10 +2,10 @@
 
 
 #include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
+#include "errors.h"
+#include "utils.h"
 
-#define M_DICT_STATIC
 
 typedef struct  { /* the used flag is the key... */
 	const char* key;
@@ -15,16 +15,16 @@ typedef struct  { /* the used flag is the key... */
 
 struct __M_dict_static_t__ {
 	_pair *array;
-	long size;
+	M_uint_t size;
 };
 
-
+#define M_DICT_STATIC
 #include "dict.h"
-#include "errors.h"
 
 
 
-M_dict_t* M_dict_nmake(long size) {
+
+M_dict_t* M_dict_nmake(M_uint_t size) {
 	M_dict_t* table = malloc(sizeof(M_dict_t));
 	
 	table->array = calloc(size, sizeof(_pair));
@@ -34,14 +34,13 @@ M_dict_t* M_dict_nmake(long size) {
 }
 
 M_dict_t* M_dict_make() {
-	M_dict_t* t = M_dict_nmake(M_DICT_DEFAULT_SIZE); 
-	return t;
+	return M_dict_nmake(M_DICT_DEFAULT_SIZE); 
 }
 
 
-M_dict_t* M_dict_resize(M_dict_t* table, long size) {
+M_dict_t* M_dict_resize(M_dict_t* table, M_uint_t size) {
 
-	int i;
+	M_uint_t i;
 	M_dict_t* new_table = M_dict_nmake(size);
 
 	for (i = 0; i < table->size; i++) {
@@ -63,8 +62,8 @@ void M_dict_free(M_dict_t* table) {
 
 
 /* http://www.cse.yorku.ca/~oz/hash.html */
-static long djb2(const char *str) {
-    long hash = 5381;
+static M_uint_t djb2(const char *str) {
+    M_uint_t hash = 5381;
     int c;
 
     while ( (c = *str++) )
@@ -77,8 +76,8 @@ static long djb2(const char *str) {
 /* utility to find where a key is located */
 static _pair* find(M_dict_t *table, const char* key) {
 
-	int i;
-	long index = djb2(key) % table->size;
+	M_uint_t i;
+	M_uint_t index = djb2(key) % table->size;
 
 	/* stop if the end of the table is reach or the key found */	
 	i = index;

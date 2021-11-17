@@ -2,11 +2,12 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include "utils.h"
 
 #define M_HSHTBL_STATIC
 
 typedef struct  {
-	long key;
+	M_uint_t key;
 	void*  val;
 	bool  used;
 } _pair;
@@ -14,7 +15,7 @@ typedef struct  {
 
 struct __M_hshtbl_static_t__ {
 	_pair *array;
-	long size;
+	M_uint_t size;
 };
 
 
@@ -23,7 +24,7 @@ struct __M_hshtbl_static_t__ {
 
 
 
-M_hshtbl_t* M_hshtbl_nmake(long size) {
+M_hshtbl_t* M_hshtbl_nmake(M_uint_t size) {
 	M_hshtbl_t* table = malloc(sizeof(M_hshtbl_t));
 	
 	table->array = calloc(size, sizeof(_pair));
@@ -38,9 +39,9 @@ M_hshtbl_t* M_hshtbl_make() {
 }
 
 
-M_hshtbl_t* M_hshtbl_resize(M_hshtbl_t* table, long size) {
+M_hshtbl_t* M_hshtbl_resize(M_hshtbl_t* table, M_uint_t size) {
 
-	int i;
+	M_uint_t i;
 	M_hshtbl_t* new_table = M_hshtbl_nmake(size);
 
 	for (i = 0; i < table->size; i++) {
@@ -62,10 +63,10 @@ void M_hshtbl_free(M_hshtbl_t* table) {
 
 
 /* utility to find where a key is located */
-static _pair* find(M_hshtbl_t *table, long key) {
+static _pair* find(M_hshtbl_t *table, M_uint_t key) {
 
-	int i;
-	long index = key % table->size;
+	M_uint_t i;
+	M_uint_t index = key % table->size;
 
 	/* stop if the end of the table is reach or the key found */	
 	i = index;
@@ -82,7 +83,7 @@ static _pair* find(M_hshtbl_t *table, long key) {
 
 }
 
-void* M_hshtbl_get(M_hshtbl_t *table, long key) {
+void* M_hshtbl_get(M_hshtbl_t *table, M_uint_t key) {
 
 	_pair* p = find(table, key);
 
@@ -95,7 +96,7 @@ void* M_hshtbl_get(M_hshtbl_t *table, long key) {
 }
 
 
-bool M_hshtbl_set(M_hshtbl_t* table, long key, void* value) {
+bool M_hshtbl_set(M_hshtbl_t* table, M_uint_t key, void* value) {
 
 	_pair* p = find(table, key);
 
@@ -110,7 +111,7 @@ bool M_hshtbl_set(M_hshtbl_t* table, long key, void* value) {
 }
 
 
-bool M_hshtbl_add(M_hshtbl_t* table, long key, void* value) {
+bool M_hshtbl_add(M_hshtbl_t* table, M_uint_t key, void* value) {
 
 	_pair* p = find(table, key);
 
@@ -127,7 +128,7 @@ bool M_hshtbl_add(M_hshtbl_t* table, long key, void* value) {
 }
 
 
-bool M_hshtbl_rem(M_hshtbl_t* table, long key) {
+bool M_hshtbl_rem(M_hshtbl_t* table, M_uint_t key) {
 
 	_pair* p = find(table, key);
 	
@@ -141,7 +142,7 @@ bool M_hshtbl_rem(M_hshtbl_t* table, long key) {
 	return true;
 }
 
-bool M_hshtbl_mem(M_hshtbl_t* table, long key) {
+bool M_hshtbl_mem(M_hshtbl_t* table, M_uint_t key) {
 
 	_pair* p = find(table, key);
 

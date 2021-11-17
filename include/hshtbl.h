@@ -9,6 +9,7 @@
 
 
 #include <stdbool.h>
+#include "utils.h"
 #define M_HSHTBL_DEFAULT_SIZE 1024
 
 
@@ -49,27 +50,27 @@
 /* uses the default size */
 M_hshtbl_t* M_hshtbl_make();
 
-M_hshtbl_t* M_hshtbl_nmake(long size);
+M_hshtbl_t* M_hshtbl_nmake(M_uint_t size);
 void M_hshtbl_free(M_hshtbl_t* table);
 
 /* a new table is created and the old one is freeed */
-M_hshtbl_t* M_hshtbl_resize(M_hshtbl_t* table, long size);
+M_hshtbl_t* M_hshtbl_resize(M_hshtbl_t* table, M_uint_t size);
 
 
 /* return NULL if not found */
-void* M_hshtbl_get(M_hshtbl_t* table, long key);
+void* M_hshtbl_get(M_hshtbl_t* table, M_uint_t key);
 
 /* return false if not in table yet */
-bool M_hshtbl_set(M_hshtbl_t* table, long key, void* value); 
+bool M_hshtbl_set(M_hshtbl_t* table, M_uint_t key, void* value); 
 
 /* return false if already in table */
-bool M_hshtbl_add(M_hshtbl_t* table, long key, void* value);
+bool M_hshtbl_add(M_hshtbl_t* table, M_uint_t key, void* value);
 
 /* remove from table, return false if it was not in table */
-bool M_hshtbl_rem(M_hshtbl_t* table, long key);
+bool M_hshtbl_rem(M_hshtbl_t* table, M_uint_t key);
 
 /* check if present in the table */
-bool  M_hshtbl_mem(M_hshtbl_t* table, long key); 
+bool  M_hshtbl_mem(M_hshtbl_t* table, M_uint_t key); 
 
 
 #endif /* hshtbl_h */

@@ -3,6 +3,8 @@
 
 
 #include <stdbool.h>
+
+#include "utils.h"
 #define M_DICT_DEFAULT_SIZE 1024
 
 
@@ -43,11 +45,11 @@
 /* uses the default size */
 M_dict_t* M_dict_make();
 
-M_dict_t* M_dict_nmake(long size);
+M_dict_t* M_dict_nmake(M_uint_t size);
 void M_dict_free(M_dict_t* table);
 
 /* a new table is created and the old one is freeed */
-M_dict_t* M_dict_resize(M_dict_t* table, long size);
+M_dict_t* M_dict_resize(M_dict_t* table, M_uint_t size);
 
 
 /* return NULL if not found */

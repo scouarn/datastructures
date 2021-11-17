@@ -1,10 +1,10 @@
 
-#define M_HSHTBL_DEFAULT_SIZE 1024
-
-#include <stdbool.h>
+#include <stdlib.h>
+#include "utils.h"
+#include "errors.h"
 
 typedef struct __pair__ {
-	long  key;
+	M_uint_t  key;
 	void* val;
 	struct __pair__ *next;
 } _pair;
@@ -12,16 +12,15 @@ typedef struct __pair__ {
 
 struct __M_hshtbl_dyn_t__ {
 	_pair *array;
-	long size;
+	M_uint_t size;
 
 };
 
+
 #include "hshtbl.h"
-#include "errors.h"
 
 
-
-M_hshtbl_t* M_hshtbl_nmake(long size) {
+M_hshtbl_t* M_hshtbl_nmake(M_uint_t size) {
 
 	M_hshtbl_t* table = malloc(sizeof(M_hshtbl_t));
 	
@@ -39,7 +38,7 @@ M_hshtbl_t* M_hshtbl_make() {
 void M_hshtbl_free(M_hshtbl_t* table) {
 
 	/* free lists*/
-	int i;
+	M_uint_t i;
 	for (i = 0; i < table->size; i++) {
 		_pair* temp;
 		_pair* node = table->array[i].next;
@@ -56,11 +55,11 @@ void M_hshtbl_free(M_hshtbl_t* table) {
 }
 
 
-M_hshtbl_t* M_hshtbl_resize(M_hshtbl_t* table, long size) {
+M_hshtbl_t* M_hshtbl_resize(M_hshtbl_t* table, M_uint_t size) {
 
 	M_hshtbl_t* new_table = M_hshtbl_nmake(size);
 
-	int i;
+	M_uint_t i;
 	for (i = 0; i < table->size; i++) {
 		_pair* node = &(table->array[i]);
 
@@ -79,10 +78,10 @@ M_hshtbl_t* M_hshtbl_resize(M_hshtbl_t* table, long size) {
 
 
 /* return the (unused) list tail if not found */
-static _pair* find(M_hshtbl_t *table, long key) {
+static _pair* find(M_hshtbl_t *table, M_uint_t key) {
 
 	_pair* node;
-	long index = key % table->size;
+	M_uint_t index = key % table->size;
 
 
 	/* stop if the end of the list is reach or the key found */	
@@ -98,7 +97,7 @@ static _pair* find(M_hshtbl_t *table, long key) {
 }
 
 
-void* M_hshtbl_get(M_hshtbl_t *table, long key) {
+void* M_hshtbl_get(M_hshtbl_t *table, M_uint_t key) {
 	_pair* p = find(table, key);
 
 	if (p->next == NULL) { /* if not in table */
@@ -109,7 +108,7 @@ void* M_hshtbl_get(M_hshtbl_t *table, long key) {
 }
 
 
-bool M_hshtbl_set(M_hshtbl_t* table, long key, void* value) {
+bool M_hshtbl_set(M_hshtbl_t* table, M_uint_t key, void* value) {
 	_pair* p = find(table, key);
 
 	if (p->next == NULL) { /* if not in table */
@@ -122,7 +121,7 @@ bool M_hshtbl_set(M_hshtbl_t* table, long key, void* value) {
 }
 
 
-bool M_hshtbl_add(M_hshtbl_t* table, long key, void* value) {
+bool M_hshtbl_add(M_hshtbl_t* table, M_uint_t key, void* value) {
 	_pair* p = find(table, key);
 
 	if (p->next != NULL) { /* if already in table */
@@ -140,7 +139,7 @@ bool M_hshtbl_add(M_hshtbl_t* table, long key, void* value) {
 
 
 
-bool M_hshtbl_rem(M_hshtbl_t* table, long key) {
+bool M_hshtbl_rem(M_hshtbl_t* table, M_uint_t key) {
 	_pair* next;
 	_pair* p = find(table, key);
 
@@ -161,7 +160,8 @@ bool M_hshtbl_rem(M_hshtbl_t* table, long key) {
 }
 
 
-bool M_hshtbl_mem(M_hshtbl_t* table, long key) {
+
+bool M_hshtbl_mem(M_hshtbl_t* table, M_uint_t key) {
 
 	_pair* p = find(table, key);
 
