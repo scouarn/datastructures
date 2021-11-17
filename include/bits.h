@@ -7,10 +7,8 @@
 #include <stdbool.h>
 
 typedef uint32_t M_bits_t;
-#define M_BITS_LEN 32
 
-
-
+M_bits_t* M_bits_alloc(int nb_bits);
 void M_bits_set   (M_bits_t bits[], int pos);
 void M_bits_reset (M_bits_t bits[], int pos);
 void M_bits_toggle(M_bits_t bits[], int pos);

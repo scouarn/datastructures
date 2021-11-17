@@ -1,9 +1,11 @@
-
-#include <stdint.h>
+#include "bits.h"
 #include <stdlib.h>
 
-#include "bits.h"
+#define M_BITS_LEN (sizeof(M_bits_t) * 8)
 
+M_bits_t* M_bits_alloc(int nb_bits) {
+	return (M_bits_t*) malloc(nb_bits / 8);
+}
 
 void M_bits_set(M_bits_t bits[], int pos) {
 	bits[pos/M_BITS_LEN] |= (M_bits_t)1 << (pos%M_BITS_LEN);	
