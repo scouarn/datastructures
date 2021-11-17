@@ -20,11 +20,10 @@ Collection of various handy cross-platform pieces of code about data manipulatio
 * queue
 * arbitrary precision int
 * threadpool
-* strings
+
 * tree
 
-* finite state automatons
-* regex
+* finite state automatons / regex / strings
 
 * random numbers
 * common algorithms
