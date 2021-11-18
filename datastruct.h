@@ -8,6 +8,7 @@
 #include "include/hshtbl.h"
 #include "include/list.h"
 #include "include/matrix.h"
+#include "include/queue.h"
 #include "include/stack.h"
 #include "include/utils.h"
 

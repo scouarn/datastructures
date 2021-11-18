@@ -11,6 +11,8 @@ Collection of various handy cross-platform pieces of code about data manipulatio
 * matrix
 * dict
 * bitfield
+* queue
+
 
 ## TODO :
 
@@ -18,11 +20,12 @@ Collection of various handy cross-platform pieces of code about data manipulatio
 * mat : det and inversion, gauss jordan
 * unsign the ints that aren't supposed to be signed -> utils.h define size_t
 
-* queue
+
 * arbitrary precision int
 * threadpool
 * tree / heap / trie / binary tree
 * graph
+
 
 * finite state automatons / regex / strings
 
