@@ -11,21 +11,23 @@ Collection of various handy cross-platform pieces of code about data manipulatio
 * dict
 * bitfield
 * queue
+* threadpool
 
 
 ## TODO :
 
-* redo lists : split with single and double linked ?
+
+* redo lists : split with single and double linked ? reclist with variadics / values on stack ?
 * mat : det and inversion, gauss jordan
 
 * arbitrary precision int
-* threadpool
 * tree / heap / trie / binary tree
+* trie dict
 * graph
 
 * finite state automatons / regex / strings
 
-* random numbers / noise
+* random numbers / perlin noise
 * common algorithms
 * complexe numbers
 * special functions
