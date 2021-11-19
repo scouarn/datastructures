@@ -6,7 +6,6 @@
 #include "include/dict.h"
 #include "include/errors.h"
 #include "include/hshtbl.h"
-#include "include/list.h"
 #include "include/matrix.h"
 #include "include/queue.h"
 #include "include/stack.h"

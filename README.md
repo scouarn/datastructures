@@ -4,8 +4,7 @@ Collection of various handy cross-platform pieces of code about data manipulatio
 
 ## What's done :
 
-* error utility 
-* linked list
+* error utility
 * hashtable
 * stack
 * matrix
@@ -16,16 +15,13 @@ Collection of various handy cross-platform pieces of code about data manipulatio
 
 ## TODO :
 
-* redo lists : split with single and double linked
+* redo lists : split with single and double linked ?
 * mat : det and inversion, gauss jordan
-* unsign the ints that aren't supposed to be signed -> utils.h define size_t
-
 
 * arbitrary precision int
 * threadpool
 * tree / heap / trie / binary tree
 * graph
-
 
 * finite state automatons / regex / strings
 
