@@ -18,7 +18,6 @@ int main(int argc, char** argv) {
 	M_num_lcpy(n, 12);
 	M_num_lcpy(m, 100);
 
-	M_num_sub(n, m, n);	
 
 	M_num_print(n);
 

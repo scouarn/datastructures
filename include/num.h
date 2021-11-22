@@ -15,13 +15,6 @@ void M_num_print(M_num_t* num);
 
 void M_num_lcpy(M_num_t* num, M_uint_t n);
 
-void M_num_ladd(M_num_t* res, M_num_t* a, M_uint_t b);
-void M_num_lsub(M_num_t* res, M_num_t* a, M_uint_t b);
-void M_num_lmul(M_num_t* res, M_num_t* a, M_uint_t b);
-void M_num_ldiv(M_num_t* res, M_num_t* a, M_uint_t b);
-void M_num_lmod(M_num_t* res, M_num_t* a, M_uint_t b);
-
-
 void M_num_zero(M_num_t* res);
 void M_num_cpy(M_num_t* res, M_num_t* num);
 void M_num_add(M_num_t* res, M_num_t* a, M_num_t* b);

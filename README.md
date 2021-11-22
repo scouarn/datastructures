@@ -12,6 +12,7 @@ Collection of various handy cross-platform pieces of code about data manipulatio
 * bitfield
 * queue
 * threadpool
+* arbitrary precision int
 
 
 ## TODO :
@@ -19,8 +20,8 @@ Collection of various handy cross-platform pieces of code about data manipulatio
 
 * redo lists : split with single and double linked ? reclist with variadics / values on stack ?
 * mat : det and inversion, gauss jordan
+* num : errors, mod, div, euclid, karatsuba, exponent...
 
-* arbitrary precision int
 * tree / heap / trie / binary tree
 * trie dict
 * graph
