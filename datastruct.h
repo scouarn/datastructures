@@ -7,6 +7,7 @@
 #include "include/errors.h"
 #include "include/hshtbl.h"
 #include "include/matrix.h"
+#include "include/num.h"
 #include "include/queue.h"
 #include "include/stack.h"
 #include "include/tpool.h"

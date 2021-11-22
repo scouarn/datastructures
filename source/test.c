@@ -3,29 +3,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static void callback(M_uint_t id) {
-
-	int i;
-
-	printf("doing job #%ld\n", id);
-
-	for (i = 0; i < 1000000000; i++) {}
-
-	printf("job #%ld done\n", id);
-}
 
 
-M_tpool_t* pool;
+M_num_t* n;
+M_num_t* m;
 
 int main(int argc, char** argv) {
 		
 	printf("Testing data structure and utility lib\n");
 
-	pool = M_tpool_make(10);
+	n = M_num_make(8);
+	m = M_num_make(8);
 
-	M_tpool_batch(pool, callback, 20);
+	M_num_lcpy(n, 12);
+	M_num_lcpy(m, 100);
 
-	M_tpool_free(pool);
+	M_num_sub(n, m, n);	
+
+	M_num_print(n);
+
+	M_num_free(n);
+	M_num_free(m);
 
 	printf("SUCCESS\n");
 	return 0;
